@@ -1,32 +1,116 @@
-//You can edit ALL of the code here
+// I added some comments to make it clearer (I hope you like it).
+let allEpisodes = [];
+let episodesSection;
+let counter;
+let episodeSelect;
+
 function setup() {
-  const allEpisodes = getAllEpisodes();
-  makePageForEpisodes(allEpisodes);
+  const root = document.getElementById("root");
+  root.textContent = "Loading episodes...";
+
+  fetch("https://api.tvmaze.com/shows/82/episodes")
+    .then(res => res.json())
+    .then(data => {
+      allEpisodes = data;
+      root.textContent = "";
+      makePageForEpisodes(allEpisodes);
+    })
+    .catch(() => {
+      root.textContent = "Error loading episodes";
+    });
 }
 
 function makePageForEpisodes(episodeList) {
   const rootElem = document.getElementById("root");
-  const selectOneOfEpisodes = document.createElement("section");
-  selectOneOfEpisodes.style.cssText =  "display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; padding: 20px; background-color: #f3f3f3;";
 
-  rootElem.append(selectOneOfEpisodes);
+  // make the search box and dropdown only once
+  if (!document.getElementById("controls-wrapper")) {
+    const controlsWrapper = document.createElement("div");
+    controlsWrapper.id = "controls-wrapper";
 
-  const episodeListtodisplay = episodeList.map(element => { 
-    const seasonCode = element.season.toString().padStart(2, '0');
-    const episodeCode = element.number.toString().padStart(2, '0'); 
-    const displayCode = `S${seasonCode}E${episodeCode}`;
-    return `
-    <article class="episode" style=" background-color: #ffffff; border-radius: 1px; width: 300px; height: 450px; padding: 1px; box-shadow: 0 3px 6px rgba(0,0,0,0.1);  max-width: 25%; justify-content: center; margin: 1px;">
-      <h3 style="border: 1px solid #000; padding: 11px; border-radius: 5px; text-align: center;">${element.name} - ${displayCode}</h3>
-      <img src="${element.image ? element.image.medium : ''}" alt="${element.name}" style="width: 70%; border-radius: 5px; margin-left: 50px;"/>
-      <div style="text-align: left; font-size: 1em; color: #555; margin-left: 11px; margin-right: 40px; padding: 5px; line-height: 1.5;">${element.summary}</div>
-    </article>
-  `}).join('');
-  selectOneOfEpisodes.innerHTML = episodeListtodisplay;  
-const footer = document.createElement("footer");
-  footer.innerHTML = `<p style="text-align:center; margin-top: 20px;">Data provided by <a href="https://www.tvmaze.com/" target="_blank">TVMaze.com</a></p>`;
-  rootElem.appendChild(footer);}
+    // 1. the search box
+    const search = document.createElement("input");
+    search.id = "search";
+    search.placeholder = "Search name or code...";
 
+    // 2. the dropdown menu 
+    episodeSelect = document.createElement("select");
+    episodeSelect.id = "episode-select";
+    
+    const defaultOpt = document.createElement("option");
+    defaultOpt.value = "all";
+    defaultOpt.textContent = "Select an episode...";
+    episodeSelect.appendChild(defaultOpt);
 
+    allEpisodes.forEach(ep => {
+      const s = ep.season.toString().padStart(2, "0");
+      const n = ep.number.toString().padStart(2, "0");
+      const code = `S${s}E${n}`;
+      const option = document.createElement("option");
+      option.value = ep.id;
+      option.textContent = `${code} - ${ep.name}`;
+      episodeSelect.appendChild(option);
+    });
+
+    // 3. the counter text
+    counter = document.createElement("span");
+    counter.id = "search-count";
+
+    controlsWrapper.append(search, episodeSelect, counter);
+    rootElem.prepend(controlsWrapper);
+
+    // listen to search typing
+    search.addEventListener("input", () => {
+      const term = search.value.toLowerCase();
+      const filtered = allEpisodes.filter(ep => {
+        const code = `s${ep.season.toString().padStart(2, "0")}e${ep.number.toString().padStart(2, "0")}`;
+        return ep.name.toLowerCase().includes(term) || code.includes(term);
+      });
+      makePageForEpisodes(filtered);
+    });
+
+    // listen to dropdown pick 
+    episodeSelect.addEventListener("change", (e) => {
+      const val = e.target.value;
+      if (val === "all") makePageForEpisodes(allEpisodes);
+      else makePageForEpisodes(allEpisodes.filter(ep => ep.id == val));
+    });
+  }
+
+  // create area for cards
+  if (!episodesSection) {
+    episodesSection = document.createElement("section");
+    episodesSection.id = "episodes-section";
+    rootElem.appendChild(episodesSection);
+  }
+
+  // show episodes in 3D fantasy cards
+  episodesSection.innerHTML = episodeList
+    .map(element => {
+      const displayCode = `S${element.season.toString().padStart(2, "0")}E${element.number.toString().padStart(2, "0")}`;
+      const cleanSummary = element.summary.replace(/<[^>]*>/g, ""); 
+
+      return `
+        <article class="episode-card">
+          <div class="card-header">
+            <h3>${displayCode} - ${element.name}</h3>
+          </div>
+          <img src="${element.image ? element.image.medium : ''}" alt="${element.name}"/>
+          <div class="card-summary">${cleanSummary}</div>
+        </article>
+      `;
+    })
+    .join('');
+
+  // add footer at the bottom
+  let footer = document.querySelector("footer");
+  if (!footer) {
+    footer = document.createElement("footer");
+    rootElem.appendChild(footer);
+  }
+  footer.innerHTML = `<p style="color: #666;">Data provided by <a href="https://www.tvmaze.com/" target="_blank">TVMaze.com</a></p>`;
+
+  counter.textContent = `Displaying ${episodeList.length}/${allEpisodes.length} episodes`;
+}
 
 window.onload = setup;
