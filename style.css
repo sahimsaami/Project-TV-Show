@@ -1,3 +1,133 @@
-#root {
-  color: rgb(6, 6, 6);
+/* General page style with your dragon background */
+body {
+  background-image: url('https://images.wallpapersden.com/image/download/drogon-cool-game-of-thrones_bW1mbGiUmZqaraWkpJRnaW1lrWZsamk.jpg');
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+  margin: 0;
+  font-family: 'Georgia', serif;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+/* Luxury dark bar with gold border */
+#controls-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 15px;
+  padding: 15px;
+  background: rgba(30, 30, 30, 0.95);
+  border-bottom: 2px solid #ffd700;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+/* Search input style */
+#search {
+  padding: 8px 12px;
+  background: #2a2a2a;
+  border: 1px solid #ffd700;
+  color: #ffd700;
+  border-radius: 5px;
+  outline: none;
+  width: 250px;
+}
+
+/* Dropdown style */
+#episode-select {
+  padding: 8px;
+  background: #2a2a2a;
+  border: 1px solid #ffd700;
+  color: #ffd700;
+  border-radius: 5px;
+  outline: none;
+}
+
+/* Counter text on the right */
+#search-count {
+  margin-left: auto;
+  color: #ffd700;
+  font-weight: bold;
+  font-size: 1.1em;
+  text-shadow: 1px 1px 2px black;
+}
+
+/* Container for all cards */
+#episodes-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+/* 3D fantasy cards */
+.episode-card {
+  background: linear-gradient(145deg, #2e2e2e, #1a1a1a);
+  border: 1px solid #444;
+  border-top: 4px solid #8b0000;
+  border-radius: 8px;
+  width: 320px;
+  min-height: 480px;
+  box-shadow: 10px 10px 20px #0e0e0e, -5px -5px 15px #333;
+  overflow: hidden;
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease; 
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+}
+
+.card-header {
+  background: rgba(139, 0, 0, 0.2);
+  padding: 15px;
+  border-bottom: 1px solid #444;
+}
+
+.card-header h3 {
+  color: #ffd700;
+  text-align: center;
+  margin: 0;
+  font-size: 1.2em;
+  text-shadow: 1px 1px 2px black;
+}
+.episode-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.3); 
+  border-color: #ffd700; 
+}
+
+.episode-card img {
+  width: 85%;
+  margin: 20px auto;
+  border: 2px solid #444;
+  border-radius: 4px;
+  box-shadow: 0 0 10px black;
+}
+
+.card-summary {
+  padding: 15px;
+  color: #ccc;
+  font-size: 0.95em;
+  line-height: 1.6;
+  text-align: justify;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+/* Footer styles */
+footer {
+  text-align: center;
+  padding: 40px;
+  margin-top: 40px;
+  border-top: 1px solid #ffd700;
+  background: rgba(0,0,0,0.8);
+}
+
+footer a {
+  color: #8b0000;
+  text-decoration: none;
+  font-weight: bold;
 }
